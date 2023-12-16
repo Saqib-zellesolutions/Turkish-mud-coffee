@@ -1,6 +1,6 @@
 const express = require("express");
 const AddVariableProduct = require("../controller/VariableProductController/AddProduct");
-const GetAllVariableProduct = require("../controller/VariableProductController/GEtProduct");
+const GetAllVariableProduct = require("../controller/VariableProductController/GetProduct");
 const GetSingleVariableProduct = require("../controller/VariableProductController/SingleProduct");
 const UpdateVariableProduct = require("../controller/VariableProductController/UpdateProduct");
 const DeleteVariableProduct = require("../controller/VariableProductController/DeleteProduct");

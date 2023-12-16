@@ -13,6 +13,7 @@ const Signup = async (req, res) => {
     const userObj = {
       ...req.body,
       password: hashPassword,
+      branch: branch,
     };
     try {
       const UserModel = GetAuthenticationModel(branch);
