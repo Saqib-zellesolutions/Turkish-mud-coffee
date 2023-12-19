@@ -1,10 +1,22 @@
 const getSliderModel = require("../../models/SliderSchema");
-const SliderModel = require("../../models/SliderSchema");
 
 const UpdateSlider = async (req, res) => {
   const id = req.params.id;
   const branch = req.params.branch;
   const newData = req.body;
+  if (req.file) {
+    // Handle image update using Multer
+    try {
+      // Assuming that you have separate fields for "image" and "banner_image"
+      if (req.file.filename) {
+        newData.image = req.file.filename;
+      }
+    } catch (err) {
+      return res
+        .status(500)
+        .json({ message: "Error handling file upload", error: err });
+    }
+  }
   try {
     const Slider = getSliderModel(branch);
     const updateSlider = await Slider.findById(id);

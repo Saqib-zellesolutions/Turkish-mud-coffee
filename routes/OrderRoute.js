@@ -4,10 +4,23 @@ const GetAllOrder = require("../controller/OrderController/GetOrder");
 const GetSingleOrder = require("../controller/OrderController/SingleOrder");
 const UpdateOrder = require("../controller/OrderController/UpdateOrder");
 const DeleteOrder = require("../controller/OrderController/DeleteOrder");
+const multer = require("multer");
 const router = express.Router();
 
-// Add Order
-router.post("/Add-Order/:branch", AddOrder);
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "./uploads"); // Define the destination folder for uploaded files
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + "-" + file.originalname); // Define the filename for the uploaded files
+  },
+});
+
+// Initialize multer
+const upload = multer({ storage: storage });
+
+// Add Order with multer middleware
+router.post("/Add-Order/:branch", upload.array("images"), AddOrder);
 
 // Get All Order
 router.get("/Get-Order/:branch", GetAllOrder);

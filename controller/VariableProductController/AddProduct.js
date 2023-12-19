@@ -1,17 +1,19 @@
 const getCategoryModel = require("../../models/CategorySchema");
-const CategoryModel = require("../../models/CategorySchema");
 const GetVariableProductModel = require("../../models/VariableProductSchema");
 
 const AddVariableProduct = async (req, res) => {
-  const { name, description, sku, image, variation } = req.body;
+  const { name, description, sku, variation } = req.body;
   const parent_id = req.params.parent_id;
   const branch = req.params.branch;
+  const images = req.files.images.map((file) =>
+    file.path.replace(/uploads\\/g, "")
+  );
   if (
     !name ||
     !description ||
     !sku ||
     !parent_id ||
-    !image ||
+    !req.files.image ||
     !variation?.length
   ) {
     return res.json({ message: "Required infos are missing" });
@@ -29,7 +31,6 @@ const AddVariableProduct = async (req, res) => {
         !item.description ||
         !item.sku ||
         !item.price ||
-        !item.images.length ||
         item.instock === undefined
       ) {
         return false;
@@ -50,8 +51,12 @@ const AddVariableProduct = async (req, res) => {
           description,
           sku,
           parent_id,
-          image: image,
-          variation: variation,
+          image: req.files.image[0].filename,
+          variation: variation.map((product) => ({
+            ...product,
+            images: images,
+          })),
+          // variation: variation,
         });
         res.json({
           message: "Product added successfully",

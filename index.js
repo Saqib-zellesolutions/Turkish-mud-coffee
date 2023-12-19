@@ -22,7 +22,7 @@ const PORT = process.env.PORT || 5000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
-
+app.use(express.static("./uploads"));
 // Middleware to connect to MongoDB based on branch connectToDatabase middlware
 
 app.use("/api/v1/Category/:branch", connectToDatabase);

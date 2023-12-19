@@ -2,19 +2,20 @@ const getCategoryModel = require("../../models/CategorySchema");
 const { v4: uuidv4 } = require("uuid");
 
 const AddCategory = async (req, res) => {
-  const { name, image, banner_image } = req.body;
+  const { name } = req.body;
   const branch = req.params.branch;
 
-  if (!name || !image || !banner_image) {
-    return res.json({ message: "Required fields missing" });
+  // Check if files are present in the request
+  if (!req.files || !req.files.image || !req.files.banner_image) {
+    return res.json({ message: "Image or banner image missing" });
   }
 
   try {
     const Category = getCategoryModel(branch);
     const data = {
       name,
-      image: image,
-      banner_image: banner_image,
+      image: req.files.image[0].filename, // Use the filename provided by Multer
+      banner_image: req.files.banner_image[0].filename, // Use the filename provided by Multer
       uniqueId: uuidv4(),
     };
     const newCategory = await Category.create(data);

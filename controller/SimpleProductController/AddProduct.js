@@ -1,9 +1,8 @@
 const getCategoryModel = require("../../models/CategorySchema");
-const CategoryModel = require("../../models/CategorySchema");
 const GetSimpleProductModel = require("../../models/SimpleProductSchema");
-const SimpleProductModel = require("../../models/SimpleProductSchema");
 const AddSimpleProduct = async (req, res) => {
-  const { name, description, sku, images, price, instock } = req.body;
+  const images = req.files.map((file) => file.path.replace(/uploads\\/g, "")); // Replace double backslashes with forward slashes
+  const { name, description, sku, price, instock } = req.body;
   const parent_id = req.params.parent_id;
   const branch = req.params.branch;
 
@@ -20,9 +19,9 @@ const AddSimpleProduct = async (req, res) => {
   }
 
   const category = await getCategoryModel(branch);
-  const categoryVerfier = await category.findOne({ uniqueId: parent_id });
+  const categoryVerifier = await category.findOne({ uniqueId: parent_id });
 
-  if (!categoryVerfier) {
+  if (!categoryVerifier) {
     return res.json({ message: "Provide a valid category id" });
   }
 
@@ -36,8 +35,10 @@ const AddSimpleProduct = async (req, res) => {
       price,
       instock,
     };
+
     const simpleProduct = GetSimpleProductModel(branch);
     const addData = await simpleProduct.create(data);
+
     res.send({ message: "Successfully added product data", addData });
   } catch (error) {
     console.log(error);
@@ -46,4 +47,5 @@ const AddSimpleProduct = async (req, res) => {
       .send({ error: "An error occurred while adding the product" });
   }
 };
+
 module.exports = AddSimpleProduct;

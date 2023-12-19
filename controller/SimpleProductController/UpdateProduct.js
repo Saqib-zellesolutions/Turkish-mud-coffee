@@ -2,8 +2,11 @@ const GetSimpleProductModel = require("../../models/SimpleProductSchema");
 const UpdateSimpleProduct = async (req, res) => {
   const id = req.params.id;
   const branch = req.params.branch;
-
-  const newData = req.body;
+  // Extract file paths from multer
+  const newData = {
+    ...req.body,
+    images: req.files.map((file) => file.path.replace(/uploads\\/g, "")),
+  };
 
   try {
     const simpleProduct = GetSimpleProductModel(branch);
