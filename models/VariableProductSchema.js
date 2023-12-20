@@ -43,8 +43,6 @@ const VariableProductSchema = new mongoose.Schema(
         images: [
           {
             type: String,
-            // public_id: String,
-            // url: String,
           },
         ],
         instock: {

@@ -5,27 +5,25 @@ const AddVariableProduct = async (req, res) => {
   const { name, description, sku, variation } = req.body;
   const parent_id = req.params.parent_id;
   const branch = req.params.branch;
-  const images = req.files.images.map((file) =>
-    file.path.replace(/uploads\\/g, "")
-  );
+  const images = req.files.images.map((file) => file.filename);
+  let ParseVariation = JSON.parse(variation);
   if (
     !name ||
     !description ||
     !sku ||
     !parent_id ||
     !req.files.image ||
-    !variation?.length
+    !ParseVariation?.length
   ) {
     return res.json({ message: "Required infos are missing" });
   }
 
   const category = await getCategoryModel(branch);
   const categoryVerfier = await category.findOne({ uniqueId: parent_id });
-
   if (!categoryVerfier) {
     return res.json({ message: "Provide a valid category id" });
   } else {
-    const required = variation.map((item) => {
+    const required = ParseVariation.map((item) => {
       if (
         !item.name ||
         !item.description ||
@@ -52,7 +50,7 @@ const AddVariableProduct = async (req, res) => {
           sku,
           parent_id,
           image: req.files.image[0].filename,
-          variation: variation.map((product) => ({
+          variation: ParseVariation.map((product) => ({
             ...product,
             images: images,
           })),

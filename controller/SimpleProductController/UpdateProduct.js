@@ -3,11 +3,15 @@ const UpdateSimpleProduct = async (req, res) => {
   const id = req.params.id;
   const branch = req.params.branch;
   // Extract file paths from multer
-  const newData = {
-    ...req.body,
-    images: req.files.map((file) => file.path.replace(/uploads\\/g, "")),
-  };
-
+  let newData;
+  if (req.files) {
+    newData = {
+      ...req.body,
+      images: req.files.map((file) => file.filename),
+    };
+  } else {
+    newData = req.body;
+  }
   try {
     const simpleProduct = GetSimpleProductModel(branch);
     const product = await simpleProduct.findById(id);

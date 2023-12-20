@@ -35,7 +35,11 @@ router.get("/Get-VariableProduct/:branch", GetAllVariableProduct);
 router.get("/Get-Single-VariableProduct/:id/:branch", GetSingleVariableProduct);
 
 // Update VariableProduct
-router.put("/Update-VariableProduct/:id/:branch", UpdateVariableProduct);
+router.put(
+  "/Update-VariableProduct/:id/:branch",
+  uploadFields,
+  UpdateVariableProduct
+);
 
 // Delete VariableProduct
 router.delete("/Delete-VariableProduct/:id/:branch", DeleteVariableProduct);

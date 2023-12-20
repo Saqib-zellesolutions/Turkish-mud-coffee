@@ -1,7 +1,7 @@
 const getCategoryModel = require("../../models/CategorySchema");
 const GetSimpleProductModel = require("../../models/SimpleProductSchema");
 const AddSimpleProduct = async (req, res) => {
-  const images = req.files.map((file) => file.path.replace(/uploads\\/g, "")); // Replace double backslashes with forward slashes
+  const images = req.files.map((file) => file.filename);
   const { name, description, sku, price, instock } = req.body;
   const parent_id = req.params.parent_id;
   const branch = req.params.branch;
