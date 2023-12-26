@@ -1,5 +1,4 @@
 const getCategoryModel = require("../../models/CategorySchema");
-const CategoryModel = require("../../models/CategorySchema");
 
 const GetAllCategory = async (req, res) => {
   const branch = req.params.branch;

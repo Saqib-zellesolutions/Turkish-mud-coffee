@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const connectToDatabase = async (req, res, next) => {
   const branch = req.params.branch;
   const DBURI = process.env[`MONGODB_URL_BRANCH${branch.toUpperCase()}`];
-
+  console.log(DBURI, "dbUrl");
   if (!DBURI) {
     console.error("DBURI is undefined. Check your environment variables.");
     res.status(500).json({ message: "Internal Server Error" });
@@ -12,6 +12,7 @@ const connectToDatabase = async (req, res, next) => {
   }
 
   try {
+    mongoose.disconnect()
     await mongoose.connect(DBURI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
