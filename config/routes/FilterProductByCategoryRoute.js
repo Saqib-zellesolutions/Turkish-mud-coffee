@@ -3,6 +3,7 @@ const GetFilterProductByCategory = require("../controller/FilterProductByCategor
 const router = express.Router();
 
 // Get All FilterProductByCategory
-router.get("/Get-FilterProductByCategory/:category/:branch", GetFilterProductByCategory);
+// router.get("/Get-FilterProductByCategory/:branch", GetFilterProductByCategory);
+router.get("/Get-FilterProductByCategory/:name/:branch", GetFilterProductByCategory);
 
 module.exports = router;
