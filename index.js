@@ -13,6 +13,7 @@ const BeveragesRoute = require("./config/routes/BeveragesRoute");
 const PaymentRoute = require("./config/routes/PaymentRoute");
 const AuthenticationRoute = require("./config/routes/AuthenticationRoute");
 const OrderRoute = require("./config/routes/OrderRoute");
+const FilterProductByCategoryRoute = require("./config/routes/FilterProductByCategoryRoute");
 const connectToDatabase = require("./dbMiddlewear");
 const app = express();
 
@@ -48,6 +49,7 @@ app.use("/api/v1/Beverages/:branch", BeveragesRoute);
 app.use("/api/v1/Payment/:branch", PaymentRoute);
 app.use("/api/v1/Authentication/:branch", AuthenticationRoute);
 app.use("/api/v1/Order/:branch", OrderRoute);
+app.use("/api/v1/FilterProductByCategory/:branch", FilterProductByCategoryRoute);
 
 app.get("/", (req, res) => {
   res.send("<h1>Hello world!</h1>");

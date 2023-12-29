@@ -17,7 +17,7 @@ const connectToDatabase = async (req, res, next) => {
     await mongoose.connect(DBURI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
-      // serverSelectionTimeoutMS: 10000,
+      // serverSelectionTimeoutMS: 60000,
     });
     console.log(`Connected to database for branch: ${branch}`);
     next();

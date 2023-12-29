@@ -20,6 +20,10 @@ const CategorySchema = new mongoose.Schema(
       default: uuidv4,
       unique: true,
     },
+    for: {
+      type: String,
+      required: true,
+    },
   },
   { timestamps: true }
 );
