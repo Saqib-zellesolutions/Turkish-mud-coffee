@@ -20,16 +20,16 @@ const AddSimpleProduct = async (req, res) => {
 
   const category = await getCategoryModel(branch);
   const categoryVerifier = await category.findOne({ uniqueId: parent_id });
-
   if (!categoryVerifier) {
     return res.json({ message: "Provide a valid category id" });
   }
-
+  const categoryName = categoryVerifier?.name
+  const genertaeSku = categoryName.substring(0, 2).toUpperCase() + '-' + name.substring(0, 2).toUpperCase() + '-' + sku
   try {
     const data = {
       name,
       description,
-      sku,
+      sku: genertaeSku,
       parent_id,
       images: images,
       price,

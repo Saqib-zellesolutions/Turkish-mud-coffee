@@ -23,7 +23,8 @@ const AddVariableProduct = async (req, res) => {
   if (!categoryVerfier) {
     return res.json({ message: "Provide a valid category id" });
   } else {
-    const required = ParseVariation.map((item) => {
+    const categoryName = categoryVerfier?.name
+    const required = ParseVariation.map((item, index) => {
       if (
         !item.name ||
         !item.description ||
@@ -33,6 +34,7 @@ const AddVariableProduct = async (req, res) => {
       ) {
         return false;
       } else {
+        item.sku = categoryName.substring(0, 2).toUpperCase() + '-' + item?.name.substring(0, 2).toUpperCase() + '-' + sku + '-' + `${index + 1}`;
         return true;
       }
     });
@@ -43,11 +45,13 @@ const AddVariableProduct = async (req, res) => {
       return res.json({ message: "Missing Product Variation" });
     } else {
       try {
+        const categoryName = categoryVerfier?.name
+        const genertaeSku = categoryName.substring(0, 2).toUpperCase() + '-' + name.substring(0, 2).toUpperCase() + '-' + sku
         const variableProduct = GetVariableProductModel(branch);
         const newProduct = await variableProduct.create({
           name,
           description,
-          sku,
+          sku: genertaeSku,
           parent_id,
           image: req.files.image[0].filename,
           variation: ParseVariation.map((product) => ({

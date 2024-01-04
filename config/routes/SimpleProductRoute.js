@@ -11,7 +11,6 @@ const storage = multer.diskStorage({
     cb(null, "./uploads"); // Define the destination folder for uploaded files
   },
   filename: function (req, file, cb) {
-    console.log(file);
     cb(null, Date.now() + "-" + file.originalname); // Define the filename for the uploaded files
   },
 });

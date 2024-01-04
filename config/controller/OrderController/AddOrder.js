@@ -1,7 +1,7 @@
 const GetOrderModel = require("../../models/OrderSchema");
 require("dotenv").config();
 let number = 1;
-const AddOrder = async (req, res) => {
+const AddOrder = async (req, res,io) => {
   const branch = req.params.branch;
   const OrderModel = GetOrderModel(branch);
   let allproduct = await OrderModel.find();
@@ -23,7 +23,6 @@ const AddOrder = async (req, res) => {
     total_amount,
     change_cash,
   } = req.body;
-  const images = req.files.map((file) => file.path.replace(/uploads\\/g, ""));
   if (
     !title ||
     !name ||
@@ -55,13 +54,11 @@ const AddOrder = async (req, res) => {
         delivery_charges,
         total_amount,
         order_number: orderNumber,
-        ProductOrder: ProductOrder.map((product) => ({
-          ...product,
-          images: images,
-        })),
+        ProductOrder: ProductOrder,
         // ProductOrder: ProductOrder,
         change_cash,
       });
+      io.emit("newOrder", newProduct);
       res.json({
         message: "Order Confirm",
         mail: "Email sent successfully",
