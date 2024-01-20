@@ -1,9 +1,22 @@
-const GetOrderModel = require("../../models/OrderSchema");
-require("dotenv").config();
+const { default: mongoose } = require("mongoose");
+const dotenv = require("dotenv");
+dotenv.config({ path: "../../../.env" });
 let number = 1;
-const AddOrder = async (req, res,io) => {
+const AddOrder = async (req, res, io) => {
   const branch = req.params.branch;
-  const OrderModel = GetOrderModel(branch);
+  const number = branch === "branch1"
+    ? 1
+    : branch === "branch2"
+      ? 2
+      : branch === "branch3"
+        ? 3
+        : branch === "branch4"
+          ? 4
+          : null;
+  const DBURI = process.env[`MONGODB_URL_BRANCH${number}`] + '?retryWrites=true&w=majority';
+  const conn = mongoose.createConnection(DBURI);
+  const OrderModel = conn.model(`Order_${branch}`, require('../../models/OrderSchema'));
+  // const OrderModel = GetOrderModel(branch);
   let allproduct = await OrderModel.find();
   order_Date = new Date();
   const {

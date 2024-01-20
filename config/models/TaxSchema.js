@@ -13,4 +13,4 @@ const TaxSchema = new mongoose.Schema(
 const getTaxModel = (branch) => {
   return mongoose.model(`Tax_${branch}`, TaxSchema);
 };
-module.exports = getTaxModel;
+module.exports = TaxSchema;

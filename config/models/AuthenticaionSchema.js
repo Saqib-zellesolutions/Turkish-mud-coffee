@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const connectToDatabase = require("../../dbMiddlewear");
 
 const AuthenticationSchema = new mongoose.Schema(
   {
@@ -26,8 +27,13 @@ const AuthenticationSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-const GetAuthenticationModel = (branch) => {
-  return mongoose.model(`user_${branch}`, AuthenticationSchema);
+const GetAuthenticationModel = async(branch) => {
+  const conn = await connectToDatabase(branch);
+    const UserModel = conn.model(`user_${branch}`, AuthenticationSchema);
+
+  // return mongoose.model(`user_${branch}`, AuthenticationSchema);
+  return UserModel;
 };
 // const UserModel = mongoose.model("user", UserSchema);
-module.exports = GetAuthenticationModel;
+module.exports = AuthenticationSchema;
+// module.exports = GetAuthenticationModel;

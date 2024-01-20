@@ -1,4 +1,7 @@
-const getCategoryModel = require("../../models/CategorySchema");
+
+const { default: mongoose } = require("mongoose");
+const dotenv = require("dotenv");
+dotenv.config({ path: "../../../.env" });
 
 const UpdateCategory = async (req, res) => {
   const id = req.params.id;
@@ -25,13 +28,24 @@ const UpdateCategory = async (req, res) => {
   }
 
   try {
-    const Category = getCategoryModel(branch);
-    const product = await Category.findById(id);
+    const number = branch === "branch1"
+      ? 1
+      : branch === "branch2"
+        ? 2
+        : branch === "branch3"
+          ? 3
+          : branch === "branch4"
+            ? 4
+            : null;
+    const DBURI = process.env[`MONGODB_URL_BRANCH${number}`] + '?retryWrites=true&w=majority';
+    const conn = mongoose.createConnection(DBURI);
+    const CategoryModel = conn.model(`category_${branch}`, require('../../models/CategorySchema'));
+    const product = await CategoryModel.findById(id);
 
     if (!product) {
       return res.status(404).json({ message: "Category not found" });
     } else {
-      const updatedCategory = await Category.findByIdAndUpdate(id, newData, {
+      const updatedCategory = await CategoryModel.findByIdAndUpdate(id, newData, {
         new: true,
       });
       res.json({

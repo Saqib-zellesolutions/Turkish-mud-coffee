@@ -32,4 +32,4 @@ const getCategoryModel = (branch) => {
   return mongoose.model(`category_${branch}`, CategorySchema);
 };
 
-module.exports = getCategoryModel;
+module.exports = CategorySchema;

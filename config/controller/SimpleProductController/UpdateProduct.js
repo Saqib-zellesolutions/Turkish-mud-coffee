@@ -1,4 +1,7 @@
-const GetSimpleProductModel = require("../../models/SimpleProductSchema");
+const { default: mongoose } = require("mongoose");
+const dotenv = require("dotenv");
+dotenv.config({ path: "../../../.env" });
+
 const UpdateSimpleProduct = async (req, res) => {
   const id = req.params.id;
   const branch = req.params.branch;
@@ -13,13 +16,24 @@ const UpdateSimpleProduct = async (req, res) => {
     newData = req.body;
   }
   try {
-    const simpleProduct = GetSimpleProductModel(branch);
-    const product = await simpleProduct.findById(id);
+    const number = branch === "branch1"
+      ? 1
+      : branch === "branch2"
+        ? 2
+        : branch === "branch3"
+          ? 3
+          : branch === "branch4"
+            ? 4
+            : null;
+    const DBURI = process.env[`MONGODB_URL_BRANCH${number}`] + '?retryWrites=true&w=majority';
+    const conn = mongoose.createConnection(DBURI);
+    const ProductModel = conn.model(`simpleProduct_${branch}`, require('../../models/SimpleProductSchema'));
+    const product = await ProductModel.findById(id);
 
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
     } else {
-      const updatedProduct = await simpleProduct.findByIdAndUpdate(
+      const updatedProduct = await ProductModel.findByIdAndUpdate(
         id,
         newData,
         { new: true }

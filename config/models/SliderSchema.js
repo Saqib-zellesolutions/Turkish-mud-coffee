@@ -20,4 +20,4 @@ const SliderSchema = new mongoose.Schema(
 const getSliderModel = (branch) => {
   return mongoose.model(`slider_${branch}`, SliderSchema);
 };
-module.exports = getSliderModel;
+module.exports = SliderSchema;

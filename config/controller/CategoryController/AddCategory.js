@@ -1,4 +1,6 @@
-const getCategoryModel = require("../../models/CategorySchema");
+const { default: mongoose } = require("mongoose");
+const dotenv = require("dotenv");
+dotenv.config({ path: "../../../.env" });
 const { v4: uuidv4 } = require("uuid");
 
 const AddCategory = async (req, res) => {
@@ -11,7 +13,18 @@ const AddCategory = async (req, res) => {
   }
 
   try {
-    const Category = getCategoryModel(branch);
+    const number = branch === "branch1"
+      ? 1
+      : branch === "branch2"
+        ? 2
+        : branch === "branch3"
+          ? 3
+          : branch === "branch4"
+            ? 4
+            : null;
+    const DBURI = process.env[`MONGODB_URL_BRANCH${number}`] + '?retryWrites=true&w=majority';
+    const conn = mongoose.createConnection(DBURI);
+    const CategoryModel = conn.model(`category_${branch}`, require('../../models/CategorySchema'));
     const data = {
       name,
       image: req.files.image[0].filename, // Use the filename provided by Multer
@@ -19,7 +32,7 @@ const AddCategory = async (req, res) => {
       uniqueId: uuidv4(),
       for:For
     };
-    const newCategory = await Category.create(data);
+    const newCategory = await CategoryModel.create(data);
 
     res.json({
       message: "Category added successfully",

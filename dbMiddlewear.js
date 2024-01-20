@@ -13,7 +13,7 @@ const connectToDatabase = async (req, res, next) => {
   }
 
   try {
-    mongoose.disconnect()
+    // mongoose.disconnect()
     await mongoose.connect(DBURI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,

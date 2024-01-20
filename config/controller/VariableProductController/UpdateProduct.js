@@ -1,4 +1,7 @@
-const GetVariableProductModel = require("../../models/VariableProductSchema");
+const { default: mongoose } = require("mongoose");
+const dotenv = require("dotenv");
+dotenv.config({ path: "../../../.env" });
+
 
 const UpdateVariableProduct = async (req, res) => {
   try {
@@ -26,14 +29,25 @@ const UpdateVariableProduct = async (req, res) => {
     newData.variation?.forEach((e) => console.log(e.images));
     console.log(newData, "bahar");
 
-    const VariableProduct = GetVariableProductModel(branch);
-    const product = await VariableProduct.findById(id);
+    const number = branch === "branch1"
+      ? 1
+      : branch === "branch2"
+        ? 2
+        : branch === "branch3"
+          ? 3
+          : branch === "branch4"
+            ? 4
+            : null;
+    const DBURI = process.env[`MONGODB_URL_BRANCH${number}`] + '?retryWrites=true&w=majority';
+    const conn = mongoose.createConnection(DBURI);
+    const VariableModel = conn.model(`variableProduct_${branch}`, require('../../models/VariableProductSchema'));
+    const product = await VariableModel.findById(id);
 
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
     }
 
-    const updatedProduct = await VariableProduct.findByIdAndUpdate(
+    const updatedProduct = await VariableModel.findByIdAndUpdate(
       id,
       {
         name: newData.name,

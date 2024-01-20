@@ -17,4 +17,4 @@ const getContentModel = (branch) => {
   return mongoose.model(`content_${branch}`, ContentSchema);
 };
 // const ContentModel = mongoose.model("content", ContentSchema);
-module.exports = getContentModel;
+module.exports = ContentSchema;

@@ -18,7 +18,7 @@ const ShippingSchema = new mongoose.Schema(
   { timestamps: true }
 );
 // const ShippingModel = mongoose.model("shipping", ShippingSchema);
-const getShippingModel = (branch) => {
-  return mongoose.model(`Shipping_${branch}`, ShippingSchema);
-};
-module.exports = getShippingModel;
+// const getShippingModel = (branch) => {
+//   return mongoose.model(`Shipping_${branch}`, ShippingSchema);
+// };
+module.exports = ShippingSchema;

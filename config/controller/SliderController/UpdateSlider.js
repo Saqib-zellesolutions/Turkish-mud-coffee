@@ -1,4 +1,6 @@
-const getSliderModel = require("../../models/SliderSchema");
+const { default: mongoose } = require("mongoose");
+const dotenv = require("dotenv");
+dotenv.config({ path: "../../../.env" });
 
 const UpdateSlider = async (req, res) => {
   const id = req.params.id;
@@ -18,12 +20,23 @@ const UpdateSlider = async (req, res) => {
     }
   }
   try {
-    const Slider = getSliderModel(branch);
-    const updateSlider = await Slider.findById(id);
+    const number = branch === "branch1"
+      ? 1
+      : branch === "branch2"
+        ? 2
+        : branch === "branch3"
+          ? 3
+          : branch === "branch4"
+            ? 4
+            : null;
+    const DBURI = process.env[`MONGODB_URL_BRANCH${number}`] + '?retryWrites=true&w=majority';
+    const conn = mongoose.createConnection(DBURI);
+    const SliderModel = conn.model(`slider_${branch}`, require('../../models/SliderSchema'));
+    const updateSlider = await SliderModel.findById(id);
     if (!updateSlider) {
       return res.status(404).json({ message: "Slider not found" });
     } else {
-      const updatedSlider = await Slider.findByIdAndUpdate(id, newData, {
+      const updatedSlider = await SliderModel.findByIdAndUpdate(id, newData, {
         new: true,
       });
       res.json({

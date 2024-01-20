@@ -1,16 +1,29 @@
 const bcryptjs = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const GetAuthenticationModel = require("../../models/AuthenticaionSchema");
-
+// const GetAuthenticationModel = require("../../models/AuthenticaionSchema");
+const { default: mongoose } = require("mongoose");
+const dotenv = require("dotenv");
+dotenv.config({ path: "../../../.env" });
 const Login = async (req, res) => {
   const { email, password, branch } = req.body;
-
+  const number = branch === "branch1"
+    ? 1
+    : branch === "branch2"
+      ? 2
+      : branch === "branch3"
+        ? 3
+        : branch === "branch4"
+          ? 4
+          : null;
+  const DBURI = process.env[`MONGODB_URL_BRANCH${number}`] + '?retryWrites=true&w=majority';
+  const conn = mongoose.createConnection(DBURI);
+  const UserModel = conn.model(`user_${branch}`, require('../../models/AuthenticaionSchema'));
   if (!email || !password) {
     return res.status(400).json({ message: "Required fields are missing" });
   }
 
   try {
-    const UserModel = GetAuthenticationModel(branch);
+    // const UserModel = GetAuthenticationModel(branch);
     const user = await UserModel.findOne({ email });
 
     if (!user) {

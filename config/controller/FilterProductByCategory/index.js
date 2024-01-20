@@ -1,21 +1,35 @@
-const getCategoryModel = require("../../models/CategorySchema");
-const GetSimpleProductModel = require("../../models/SimpleProductSchema");
-const GetVariableProductModel = require("../../models/VariableProductSchema");
+const { default: mongoose } = require("mongoose");
+const dotenv = require("dotenv");
+dotenv.config({ path: "../../../.env" });
 
 const GetFilterProductByCategory = async (req, res) => {
   const branch = req.params.branch;
   const name = req.params.name;
 
   try {
-    const Category = getCategoryModel(branch);
-    const categories = await Category.findOne({ name });
+    const number = branch === "branch1"
+      ? 1
+      : branch === "branch2"
+        ? 2
+        : branch === "branch3"
+          ? 3
+          : branch === "branch4"
+            ? 4
+            : null;
+    const DBURI = process.env[`MONGODB_URL_BRANCH${number}`] + '?retryWrites=true&w=majority';
+    const conn = mongoose.createConnection(DBURI);
+    const CategoryModel = conn.model(`category_${branch}`, require('../../models/CategorySchema'));
+    const ProductModel = conn.model(`simpleProduct_${branch}`, require('../../models/SimpleProductSchema'));
+    const BeveragesModel = conn.model(`Beverages_${branch}`, require('../../models/BeveragesSchema'));
+    const VariableModel = conn.model(`variableProduct_${branch}`, require('../../models/VariableProductSchema'));
+    const categories = await CategoryModel.findOne({ name });
     // res.json({ categories });
     let uniqueId = categories?.uniqueId;
     console.log(uniqueId);
-    const SimpleProduct = GetSimpleProductModel(branch);
-    const simpleProduct = await SimpleProduct.find({ parent_id: uniqueId });
-    const VariableProduct = GetVariableProductModel(branch);
-    const variableProduct = await VariableProduct.find({
+    // const SimpleProduct = GetSimpleProductModel(branch);
+    const simpleProduct = await ProductModel.find({ parent_id: uniqueId });
+    // const VariableProduct = GetVariableProductModel(branch);
+    const variableProduct = await VariableModel.find({
       parent_id: uniqueId,
     });
     const products = simpleProduct.concat(variableProduct);

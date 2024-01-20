@@ -37,4 +37,4 @@ const BeveragesSchema = new mongoose.Schema(
 const GetBeveragesModel = (branch) => {
   return mongoose.model(`Beverages_${branch}`, BeveragesSchema);
 };
-module.exports = GetBeveragesModel;
+module.exports = BeveragesSchema;

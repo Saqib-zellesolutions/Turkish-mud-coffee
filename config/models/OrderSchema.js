@@ -112,4 +112,4 @@ const GetOrderModel = (branch) => {
   return mongoose.model(`Order_${branch}`, OrderSchema);
 };
 // const OrderModel = mongoose.model("order", OrderSchema);
-module.exports = GetOrderModel;
+module.exports = OrderSchema;

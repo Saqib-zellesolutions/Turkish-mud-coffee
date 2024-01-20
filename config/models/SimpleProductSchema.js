@@ -37,4 +37,4 @@ const SimpleProductSchema = new mongoose.Schema(
 const GetSimpleProductModel = (branch) => {
   return mongoose.model(`simpleProduct_${branch}`, SimpleProductSchema);
 };
-module.exports = GetSimpleProductModel;
+module.exports = SimpleProductSchema;

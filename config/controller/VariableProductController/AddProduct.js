@@ -1,5 +1,6 @@
-const getCategoryModel = require("../../models/CategorySchema");
-const GetVariableProductModel = require("../../models/VariableProductSchema");
+const { default: mongoose } = require("mongoose");
+const dotenv = require("dotenv");
+dotenv.config({ path: "../../../.env" });
 
 const AddVariableProduct = async (req, res) => {
   const { name, description, sku, variation } = req.body;
@@ -18,8 +19,19 @@ const AddVariableProduct = async (req, res) => {
     return res.json({ message: "Required infos are missing" });
   }
 
-  const category = await getCategoryModel(branch);
-  const categoryVerfier = await category.findOne({ uniqueId: parent_id });
+  const number = branch === "branch1"
+    ? 1
+    : branch === "branch2"
+      ? 2
+      : branch === "branch3"
+        ? 3
+        : branch === "branch4"
+          ? 4
+          : null;
+  const DBURI = process.env[`MONGODB_URL_BRANCH${number}`] + '?retryWrites=true&w=majority';
+  const conn = mongoose.createConnection(DBURI);
+  const CategoryModel = conn.model(`category_${branch}`, require('../../models/CategorySchema'));
+  const categoryVerfier = await CategoryModel.findOne({ uniqueId: parent_id });
   if (!categoryVerfier) {
     return res.json({ message: "Provide a valid category id" });
   } else {
@@ -47,8 +59,9 @@ const AddVariableProduct = async (req, res) => {
       try {
         const categoryName = categoryVerfier?.name
         const genertaeSku = categoryName.substring(0, 2).toUpperCase() + '-' + name.substring(0, 2).toUpperCase() + '-' + sku
-        const variableProduct = GetVariableProductModel(branch);
-        const newProduct = await variableProduct.create({
+        // const variableProduct = GetVariableProductModel(branch);
+        const VariableModel = conn.model(`variableProduct_${branch}`, require('../../models/VariableProductSchema'));
+        const newProduct = await VariableModel.create({
           name,
           description,
           sku: genertaeSku,

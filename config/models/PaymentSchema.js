@@ -16,4 +16,4 @@ const PaymentSchema = new mongoose.Schema(
 const getPaymentModel = (branch) => {
   return mongoose.model(`Payment_${branch}`, PaymentSchema);
 };
-module.exports = getPaymentModel;
+module.exports = PaymentSchema;

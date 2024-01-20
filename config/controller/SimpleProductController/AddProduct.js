@@ -1,5 +1,7 @@
-const getCategoryModel = require("../../models/CategorySchema");
-const GetSimpleProductModel = require("../../models/SimpleProductSchema");
+const { default: mongoose } = require("mongoose");
+const dotenv = require("dotenv");
+dotenv.config({ path: "../../../.env" });
+
 const AddSimpleProduct = async (req, res) => {
   const images = req.files.map((file) => file.filename);
   const { name, description, sku, price, instock } = req.body;
@@ -17,9 +19,20 @@ const AddSimpleProduct = async (req, res) => {
   ) {
     return res.json({ message: "Required infos are missing" });
   }
-
-  const category = await getCategoryModel(branch);
-  const categoryVerifier = await category.findOne({ uniqueId: parent_id });
+  const number = branch === "branch1"
+    ? 1
+    : branch === "branch2"
+      ? 2
+      : branch === "branch3"
+        ? 3
+        : branch === "branch4"
+          ? 4
+          : null;
+  const DBURI = process.env[`MONGODB_URL_BRANCH${number}`] + '?retryWrites=true&w=majority';
+  const conn = mongoose.createConnection(DBURI);
+  const CategoryModel = conn.model(`category_${branch}`, require('../../models/CategorySchema'));
+  const ProductModel = conn.model(`simpleProduct_${branch}`, require('../../models/SimpleProductSchema'));
+  const categoryVerifier = await CategoryModel.findOne({ uniqueId: parent_id });
   if (!categoryVerifier) {
     return res.json({ message: "Provide a valid category id" });
   }
@@ -35,9 +48,7 @@ const AddSimpleProduct = async (req, res) => {
       price,
       instock,
     };
-
-    const simpleProduct = GetSimpleProductModel(branch);
-    const addData = await simpleProduct.create(data);
+    const addData = await ProductModel.create(data);
 
     res.send({ message: "Successfully added product data", addData });
   } catch (error) {

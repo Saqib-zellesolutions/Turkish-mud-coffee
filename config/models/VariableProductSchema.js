@@ -61,4 +61,4 @@ const VariableProductSchema = new mongoose.Schema(
 const GetVariableProductModel = (branch) => {
   return mongoose.model(`variableProduct_${branch}`, VariableProductSchema);
 };
-module.exports = GetVariableProductModel;
+module.exports = VariableProductSchema;
