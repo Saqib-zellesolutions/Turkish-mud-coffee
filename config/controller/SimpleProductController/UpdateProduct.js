@@ -27,13 +27,19 @@ const UpdateSimpleProduct = async (req, res) => {
             : null;
     const DBURI = process.env[`MONGODB_URL_BRANCH${number}`] + '?retryWrites=true&w=majority';
     const conn = mongoose.createConnection(DBURI);
-    const ProductModel = conn.model(`simpleProduct_${branch}`, require('../../models/SimpleProductSchema'));
-    const product = await ProductModel.findById(id);
-
+    const SimpleProductModel = conn.model(`simpleProduct_${branch}`, require('../../models/SimpleProductSchema'));
+    const ProductModel = conn.model(`Product_${branch}`, require('../../models/ProductSchema'));
+    const product = await SimpleProductModel.findById(id);
+    await ProductModel.findById(id);
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
     } else {
-      const updatedProduct = await ProductModel.findByIdAndUpdate(
+      const updatedProduct = await SimpleProductModel.findByIdAndUpdate(
+        id,
+        newData,
+        { new: true }
+      );
+      await ProductModel.findByIdAndUpdate(
         id,
         newData,
         { new: true }

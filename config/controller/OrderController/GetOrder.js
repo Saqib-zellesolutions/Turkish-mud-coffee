@@ -16,18 +16,29 @@ const GetAllOrder = async (req, res) => {
             : null;
     const DBURI = process.env[`MONGODB_URL_BRANCH${number}`] + '?retryWrites=true&w=majority';
     const conn = mongoose.createConnection(DBURI);
+    
+    const ProductModel = conn.model(`Product_${branch}`, require('../../models/ProductSchema'));
+
     const OrderModel = conn.model(`Order_${branch}`, require('../../models/OrderSchema'));
-    // const OrderModel = GetOrderModel(branch);
-    const order = await OrderModel.find();
-    if (!order) {
+
+    const order = await OrderModel.find().populate({
+      path: 'ProductOrder',
+      populate: {
+        path: 'product',
+        model: ProductModel,
+      },
+    });
+
+    if (!order || order.length === 0) {
       res.status(400).json({
-        message: "order not available",
+        message: "Orders not available",
       });
     } else {
       res.json(order);
     }
   } catch (err) {
-    res.status(500).json({ message: "Error retrieving users", error: err });
+    console.log(err);
+    res.status(500).json({ message: "Error retrieving orders", error: err });
   }
 };
 

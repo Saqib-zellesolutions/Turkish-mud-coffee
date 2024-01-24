@@ -1,4 +1,4 @@
-const { default: mongoose } = require("mongoose");
+const { default: mongoose, Types } = require("mongoose");
 const dotenv = require("dotenv");
 dotenv.config({ path: "../../../.env" });
 
@@ -57,21 +57,31 @@ const AddVariableProduct = async (req, res) => {
       return res.json({ message: "Missing Product Variation" });
     } else {
       try {
+        const sharedId = new Types.ObjectId();
         const categoryName = categoryVerfier?.name
         const genertaeSku = categoryName.substring(0, 2).toUpperCase() + '-' + name.substring(0, 2).toUpperCase() + '-' + sku
         // const variableProduct = GetVariableProductModel(branch);
         const VariableModel = conn.model(`variableProduct_${branch}`, require('../../models/VariableProductSchema'));
+        const ProductModel = conn.model(`Product_${branch}`, require('../../models/ProductSchema'));
+        const productVariations = await Promise.all(ParseVariation?.map(async (product) => {
+          const newProduct = await ProductModel.create({
+            ...product,
+            images: images,
+          });
+          return newProduct;  // Get the _id of each variation and store in an array
+        }));
         const newProduct = await VariableModel.create({
           name,
           description,
           sku: genertaeSku,
           parent_id,
           image: req.files.image[0].filename,
-          variation: ParseVariation.map((product) => ({
-            ...product,
-            images: images,
-          })),
-          // variation: variation,
+          // variation: ParseVariation.map((product) => ({
+          //   _id: sharedId,
+          //   ...product,
+          //   images: images,
+          // })),
+          variation: productVariations,
         });
         res.json({
           message: "Product added successfully",

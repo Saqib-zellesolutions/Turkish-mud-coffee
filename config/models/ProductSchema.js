@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const SimpleProductSchema = new mongoose.Schema(
+const ProductSchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -36,8 +36,7 @@ const SimpleProductSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-// const SimpleProductModel = mongoose.model("SimpleProduct", SimpleProductSchema);
-const GetSimpleProductModel = (branch) => {
-  return mongoose.model(`simpleProduct_${branch}`, SimpleProductSchema);
+const GetProductModel = (branch) => {
+  return mongoose.model(`Product_${branch}`, ProductSchema);
 };
-module.exports = SimpleProductSchema;
+module.exports = ProductSchema;

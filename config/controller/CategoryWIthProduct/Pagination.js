@@ -2,8 +2,10 @@ const { default: mongoose } = require("mongoose");
 const dotenv = require("dotenv");
 dotenv.config({ path: "../../../.env" });
 
-const CategoryWthProduct = async (req, res) => {
+const PaginationCategoryWthProduct = async (req, res) => {
     const branch = req.params.branch;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
 
     try {
         const number = branch === 'branch1'
@@ -26,8 +28,15 @@ const CategoryWthProduct = async (req, res) => {
         const SimpleProductModel = conn.model(`simpleProduct_${branch}`, require('../../models/SimpleProductSchema'));
         const VariableProductModel = conn.model(`variableProduct_${branch}`, require('../../models/VariableProductSchema'));
         const BeveragesModel = conn.model(`Beverages_${branch}`, require('../../models/BeveragesSchema'));
-        // Fetch categories
-        const categories = await CategoryModel.find();
+
+        // Fetch total number of categories
+        const totalCategories = await CategoryModel.countDocuments();
+
+        // Calculate skip value for pagination
+        const skip = (page - 1) * limit;
+
+        // Fetch categories with pagination
+        const categories = await CategoryModel.find().skip(skip).limit(limit);
 
         // Fetch associated products for each category
         const categoriesWithProducts = await Promise.all(categories.map(async (category) => {
@@ -42,12 +51,15 @@ const CategoryWthProduct = async (req, res) => {
             };
         }));
 
-        res.json({ categories: categoriesWithProducts });
+        res.json({
+            categories: categoriesWithProducts,
+            currentPage: page,
+            totalPages: Math.ceil(totalCategories / limit)
+        });
     } catch (error) {
         console.error('Error fetching categories with products:', error);
         res.status(500).json({ message: 'Internal Server Error' });
     }
 }
-module.exports = CategoryWthProduct;
 
-
+module.exports = PaginationCategoryWthProduct;

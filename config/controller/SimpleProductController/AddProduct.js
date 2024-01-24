@@ -1,10 +1,10 @@
-const { default: mongoose } = require("mongoose");
+const { default: mongoose, Types } = require("mongoose");
 const dotenv = require("dotenv");
 dotenv.config({ path: "../../../.env" });
 
 const AddSimpleProduct = async (req, res) => {
   const images = req.files.map((file) => file.filename);
-  const { name, description, sku, price, instock } = req.body;
+  const { name, description, sku, price, instock, salePrice } = req.body;
   const parent_id = req.params.parent_id;
   const branch = req.params.branch;
 
@@ -31,7 +31,8 @@ const AddSimpleProduct = async (req, res) => {
   const DBURI = process.env[`MONGODB_URL_BRANCH${number}`] + '?retryWrites=true&w=majority';
   const conn = mongoose.createConnection(DBURI);
   const CategoryModel = conn.model(`category_${branch}`, require('../../models/CategorySchema'));
-  const ProductModel = conn.model(`simpleProduct_${branch}`, require('../../models/SimpleProductSchema'));
+  const SimpleProductModel = conn.model(`simpleProduct_${branch}`, require('../../models/SimpleProductSchema'));
+  const ProductModel = conn.model(`Product_${branch}`, require('../../models/ProductSchema'));
   const categoryVerifier = await CategoryModel.findOne({ uniqueId: parent_id });
   if (!categoryVerifier) {
     return res.json({ message: "Provide a valid category id" });
@@ -39,7 +40,10 @@ const AddSimpleProduct = async (req, res) => {
   const categoryName = categoryVerifier?.name
   const genertaeSku = categoryName.substring(0, 2).toUpperCase() + '-' + name.substring(0, 2).toUpperCase() + '-' + sku
   try {
+    // const sharedId = parent_id;
+    const sharedId = new Types.ObjectId();
     const data = {
+      _id: sharedId,
       name,
       description,
       sku: genertaeSku,
@@ -47,8 +51,10 @@ const AddSimpleProduct = async (req, res) => {
       images: images,
       price,
       instock,
+      salePrice
     };
-    const addData = await ProductModel.create(data);
+    const addData = await SimpleProductModel.create(data);
+     await ProductModel.create(data);
 
     res.send({ message: "Successfully added product data", addData });
   } catch (error) {

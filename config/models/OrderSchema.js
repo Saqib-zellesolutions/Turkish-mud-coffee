@@ -68,42 +68,53 @@ const OrderSchema = new mongoose.Schema(
     },
     ProductOrder: [
       {
-        name: {
-          type: String,
-          require: true,
-        },
-        description: {
-          type: String,
-          require: true,
-        },
-        sku: {
-          type: String,
-          require: true,
-        },
-        parent_id: {
-          type: String,
-          require: true,
-        },
-        images: [
-          {
-            type: String,
-          },
-        ],
-        price: {
-          type: String,
-          require: true,
+        product: {
+          type: mongoose.Schema.Types.ObjectId,
+          refPath: 'Product',
+          required: true,
         },
         quantity: {
           type: Number,
-          require: true,
-        },
-        instock: {
-          type: Boolean,
-        },
-        variation: {
-          type: Object,
+          required: true,
         },
       },
+      // {
+      //   name: {
+      //     type: String,
+      //     require: true,
+      //   },
+      //   description: {
+      //     type: String,
+      //     require: true,
+      //   },
+      //   sku: {
+      //     type: String,
+      //     require: true,
+      //   },
+      //   parent_id: {
+      //     type: String,
+      //     require: true,
+      //   },
+      //   images: [
+      //     {
+      //       type: String,
+      //     },
+      //   ],
+      //   price: {
+      //     type: String,
+      //     require: true,
+      //   },
+      //   quantity: {
+      //     type: Number,
+      //     require: true,
+      //   },
+      //   instock: {
+      //     type: Boolean,
+      //   },
+      //   variation: {
+      //     type: Object,
+      //   },
+      // },
     ],
   },
   { timestamps: true }

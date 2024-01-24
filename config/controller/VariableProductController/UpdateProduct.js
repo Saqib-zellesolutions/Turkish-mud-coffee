@@ -46,7 +46,23 @@ const UpdateVariableProduct = async (req, res) => {
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
     }
-
+    const productVariations = await Promise.all(newData.variation.map(async (variation) => {
+      const variationId = variation._id;
+      const ProductModel = conn.model(`Product_${branch}`, require('../../models/ProductSchema'));
+      await ProductModel.findByIdAndUpdate(
+        variationId,
+        {
+          name: variation.name,
+          description: variation.description,
+          sku: variation.sku,
+          price: variation.price,
+          instock: variation.instock,
+          images: variation.images,
+        },
+        { new: true } // To get the updated document
+      );
+      return variation
+    }));
     const updatedProduct = await VariableModel.findByIdAndUpdate(
       id,
       {
@@ -54,7 +70,7 @@ const UpdateVariableProduct = async (req, res) => {
         description: newData.description,
         sku: newData.sku,
         image: newData.image,
-        variation: newData.variation,
+        variation: productVariations  ,
       },
       { new: true } // To get the updated document
     );

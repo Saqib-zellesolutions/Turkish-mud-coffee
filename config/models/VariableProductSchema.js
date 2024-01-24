@@ -40,6 +40,9 @@ const VariableProductSchema = new mongoose.Schema(
           type: String,
           require: true,
         },
+        salePrice: {
+          type: String,
+        },
         images: [
           {
             type: String,

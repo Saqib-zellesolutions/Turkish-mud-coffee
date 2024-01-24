@@ -3,7 +3,7 @@ const dotenv = require("dotenv");
 dotenv.config({ path: "../../../.env" });
 const AddSimpleProduct = async (req, res) => {
   const images = req.files.map((file) => file.filename); // Replace double backslashes with forward slashes
-  const { name, description, sku, price, instock } = req.body;
+  const { name, description, sku, price, instock, salePrice } = req.body;
   const parent_id = req.params.parent_id;
   const branch = req.params.branch;
 
@@ -31,6 +31,7 @@ const AddSimpleProduct = async (req, res) => {
   const conn = mongoose.createConnection(DBURI);
   const BeveragesModel = conn.model(`Beverages_${branch}`, require('../../models/BeveragesSchema'));
   const CategoryModel = conn.model(`category_${branch}`, require('../../models/CategorySchema'));
+  const ProductModel = conn.model(`Product_${branch}`, require('../../models/ProductSchema'));
   // const category = await getCategoryModel(branch);
   const categoryVerifier = await CategoryModel.findOne({ uniqueId: parent_id });
 
@@ -41,7 +42,9 @@ const AddSimpleProduct = async (req, res) => {
   try {
     const categoryName = categoryVerifier?.name
     const genertaeSku = categoryName.substring(0, 2).toUpperCase() + '-' + name.substring(0, 2).toUpperCase() + '-' + sku
+    const sharedId = new Types.ObjectId();
     const data = {
+      _id: sharedId,
       name,
       description,
       sku: genertaeSku,
@@ -49,11 +52,12 @@ const AddSimpleProduct = async (req, res) => {
       images: images,
       price,
       instock,
+      salePrice
     };
 
     // const Beverages = GetBeveragesModel(branch);
     const addData = await BeveragesModel.create(data);
-
+    await ProductModel.create(data);
     res.send({ message: "Successfully added product data", addData });
   } catch (error) {
     console.log(error);

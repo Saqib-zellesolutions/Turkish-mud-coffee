@@ -17,11 +17,16 @@ const DeleteBeverages = async (req, res) => {
     const DBURI = process.env[`MONGODB_URL_BRANCH${number}`] + '?retryWrites=true&w=majority';
     const conn = mongoose.createConnection(DBURI);
     const BeveragesModel = conn.model(`Beverages_${branch}`, require('../../models/BeveragesSchema'));
+    const ProductModel = conn.model(`Product_${branch}`, require('../../models/ProductSchema'));
+
     const product = await BeveragesModel.findById(id);
+    await ProductModel.findById(id);
+
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
     } else {
       await BeveragesModel.findByIdAndDelete(id);
+      await ProductModel.findByIdAndDelete(id);
       res.json({ message: "Product deleted successfully", product });
     }
   } catch (err) {

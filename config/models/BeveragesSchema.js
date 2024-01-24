@@ -27,6 +27,9 @@ const BeveragesSchema = new mongoose.Schema(
       type: String,
       require: true,
     },
+    salePrice: {
+      type: String,
+    },
     instock: {
       type: Boolean,
     },
